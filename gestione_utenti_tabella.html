@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Anagrafica Utenti</title>
+    <!-- Tailwind CSS per un design moderno e pulito -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen py-10 px-4">
+    <div class="max-w-4xl mx-auto space-y-8">
+        
+        <!-- Intestazione -->
+        <div class="text-center">
+            <h1 class="text-3xl font-bold tracking-tight text-slate-900">Gestione Anagrafica Utenti</h1>
+            <p class="text-slate-600 mt-2">Compila il modulo per aggiungere dinamicamente i dati alla tabella sottostante.</p>
+        </div>
+
+        <!-- Gabbia Grafica / Form Card -->
+        <div class="bg-white shadow-xl rounded-2xl p-6 md:p-8 border border-slate-100">
+            <!-- Messaggio di notifica personalizzato (sostituto moderno di alert) -->
+            <div id="toastMessage" class="hidden mb-6 p-4 rounded-xl text-sm font-medium transition-all duration-300"></div>
+
+            <form id="userForm" onsubmit="event.preventDefault(); aggiungiUtente();" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Nome</label>
+                    <input type="text" id="nome" placeholder="es. Mario" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Cognome</label>
+                    <input type="text" id="cognome" placeholder="es. Rossi" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Indirizzo</label>
+                    <input type="text" id="indirizzo" placeholder="es. Via Roma 10" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Città</label>
+                    <input type="text" id="citta" placeholder="es. Milano" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Età</label>
+                    <input type="number" id="eta" placeholder="es. 25" min="0" max="120" class="w-full md:w-1/2 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                </div>
+                <div class="md:col-span-2 pt-2">
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-indigo-200 transition-all duration-200 active:scale-[0.99]">
+                        Aggiungi alla Tabella
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Sezione Tabella Dinamica -->
+        <div class="bg-white shadow-xl rounded-2xl p-6 md:p-8 border border-slate-100">
+            <h2 class="text-xl font-bold text-slate-900 mb-4">Elenco Utenti Registrati</h2>
+            <div class="overflow-x-auto">
+                <table id="tabellaUtenti" class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-200 text-slate-500 text-sm uppercase tracking-wider bg-slate-50">
+                            <th class="py-3 px-4 rounded-l-xl">Nome</th>
+                            <th class="py-3 px-4">Cognome</th>
+                            <th class="py-3 px-4">Indirizzo</th>
+                            <th class="py-3 px-4">Città</th>
+                            <th class="py-3 px-4">Età</th>
+                            <th class="py-3 px-4 rounded-r-xl text-center">Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpoTabella" class="divide-y divide-slate-100 text-slate-700">
+                        <!-- Le righe verranno inserite dinamicamente qui -->
+                    </tbody>
+                </table>
+            </div>
+            <!-- Stato vuoto iniziale -->
+            <div id="emptyState" class="text-center py-8 text-slate-400 text-sm">
+                Nessun utente inserito. Compila il modulo sopra per iniziare.
+            </div>
+        </div>
+    </div>
+
+    <!-- Script JavaScript per la gestione della tabella e del DOM -->
+    <script>
+        // Funzione di supporto per mostrare notifiche visive senza usare l'alert()
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toastMessage');
+            toast.textContent = message;
+            toast.className = `mb-6 p-4 rounded-xl text-sm font-medium transition-all duration-300 ${isError ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 4000);
+        }
+
+        // Gestione della visibilità dell'avviso tabella vuota
+        function aggiornaStatoTabella() {
+            const tbody = document.getElementById('corpoTabella');
+            const emptyState = document.getElementById('emptyState');
+            if (tbody.rows.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+            }
+        }
+
+        // Funzione principale richiamata dal bottone per aggiungere i dati alla tabella
+        function aggiungiUtente() {
+            // 1. Recupero dei valori dai 5 campi di input
+            const nome = document.getElementById('nome').value.trim();
+            const cognome = document.getElementById('cognome').value.trim();
+            const indirizzo = document.getElementById('indirizzo').value.trim();
+            const citta = document.getElementById('citta').value.trim();
+            const eta = document.getElementById('eta').value.trim();
+
+            // 2. Validazione di base per evitare campi vuoti
+            if (!nome || !cognome || !indirizzo || !citta || !eta) {
+                showToast('Attenzione: Tutti i campi sono obbligatori!', true);
+                return;
+            }
+
+            if (Number(eta) <= 0 || Number(eta) > 120) {
+                showToast('Attenzione: Inserire un\'età valida compresa tra 1 e 120.', true);
+                return;
+            }
+
+            // 3. Riferimento al corpo della tabella HTML
+            const tbody = document.getElementById('corpoTabella');
+
+            // 4. Utilizzo dei metodi DOM (stile W3Schools) insertRow e insertCell
+            const newRow = tbody.insertRow(-1); // Inserisce la riga in fondo
+            newRow.className = "hover:bg-slate-50 transition-colors";
+
+            const cellNome = newRow.insertCell(0);
+            const cellCognome = newRow.insertCell(1);
+            const cellIndirizzo = newRow.insertCell(2);
+            const cellCitta = newRow.insertCell(3);
+            const cellEta = newRow.insertCell(4);
+            const cellAzioni = newRow.insertCell(5);
+
+            // Stili delle celle
+            cellNome.className = "py-4 px-4 font-medium text-slate-900";
+            cellCognome.className = "py-4 px-4";
+            cellIndirizzo.className = "py-4 px-4 text-slate-500";
+            cellCitta.className = "py-4 px-4";
+            cellEta.className = "py-4 px-4";
+            cellAzioni.className = "py-4 px-4 text-center";
+
+            // Assegnazione del contenuto testuale
+            cellNome.textContent = nome;
+            cellCognome.textContent = cognome;
+            cellIndirizzo.textContent = indirizzo;
+            cellCitta.textContent = citta;
+            cellEta.textContent = eta;
+
+            // Aggiunta opzionale di un pulsante per rimuovere la singola riga
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Elimina';
+            deleteBtn.className = 'text-xs bg-red-50 text-red-600 hover:bg-red-100 font-medium py-1.5 px-3 rounded-lg transition-colors';
+            deleteBtn.onclick = function() {
+                tbody.deleteRow(newRow.rowIndex - 1);
+                aggiornaStatoTabella();
+                showToast('Riga rimossa con successo.', false);
+            };
+            cellAzioni.appendChild(deleteBtn);
+
+            // 5. Pulizia dei campi input dopo l'inserimento
+            document.getElementById('userForm').reset();
+
+            // Aggiornamento dello stato e feedback positivo
+            aggiornaStatoTabella();
+            showToast('Dati aggiunti con successo alla tabella!');
+        }
+    </script>
+</body>
+</html>
