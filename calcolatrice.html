@@ -1,0 +1,49 @@
+<nav>
+  <a href="index.html">Gestione Utenti</a> | 
+  <a href="calcolatrice.html">Calcolatrice</a>
+</nav>
+<hr>
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Calcolatrice</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    input, button { margin: 5px 0; padding: 10px; display: block; width: 200px; }
+    .ops { display: flex; gap: 5px; width: 200px; }
+    .ops button { flex: 1; }
+  </style>
+</head>
+<body>
+
+  <input type="text" id="n1" placeholder="Numero 1">
+  <input type="text" id="n2" placeholder="Numero 2">
+
+  <div class="ops">
+    <button onclick="op='+'">+</button>
+    <button onclick="op='-'">-</button>
+    <button onclick="op='*'">*</button>
+    <button onclick="op='/'">/</button>
+  </div>
+
+  <button onclick="calcola()">=</button>
+  <h2 id="res">0</h2>
+
+  <script>
+    var op = "";
+    function calcola() {
+      var a = Number(document.getElementById("n1").value);
+      var b = Number(document.getElementById("n2").value);
+      var r = 0;
+      if (op === "+") r = a + b;
+      if (op === "-") r = a - b;
+      if (op === "*") r = a * b;
+      if (op === "/") r = b !== 0 ? a / b : "Errore";
+      document.getElementById("res").innerHTML = r;
+    }
+  </script>
+
+</body>
+</html>
