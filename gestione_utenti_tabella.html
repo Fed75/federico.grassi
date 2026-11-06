@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestione Anagrafica Utenti</title>
-    <!-- Tailwind CSS per un design moderno e pulito -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -13,18 +12,12 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen py-10 px-4">
     <div class="max-w-4xl mx-auto space-y-8">
-        
-        <!-- Intestazione -->
         <div class="text-center">
             <h1 class="text-3xl font-bold tracking-tight text-slate-900">Gestione Anagrafica Utenti</h1>
             <p class="text-slate-600 mt-2">Compila il modulo per aggiungere dinamicamente i dati alla tabella sottostante.</p>
         </div>
-
-        <!-- Gabbia Grafica / Form Card -->
         <div class="bg-white shadow-xl rounded-2xl p-6 md:p-8 border border-slate-100">
-            <!-- Messaggio di notifica personalizzato (sostituto moderno di alert) -->
             <div id="toastMessage" class="hidden mb-6 p-4 rounded-xl text-sm font-medium transition-all duration-300"></div>
-
             <form id="userForm" onsubmit="event.preventDefault(); aggiungiUtente();" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-2">Nome</label>
@@ -53,8 +46,6 @@
                 </div>
             </form>
         </div>
-
-        <!-- Sezione Tabella Dinamica -->
         <div class="bg-white shadow-xl rounded-2xl p-6 md:p-8 border border-slate-100">
             <h2 class="text-xl font-bold text-slate-900 mb-4">Elenco Utenti Registrati</h2>
             <div class="overflow-x-auto">
@@ -70,20 +61,15 @@
                         </tr>
                     </thead>
                     <tbody id="corpoTabella" class="divide-y divide-slate-100 text-slate-700">
-                        <!-- Le righe verranno inserite dinamicamente qui -->
                     </tbody>
                 </table>
             </div>
-            <!-- Stato vuoto iniziale -->
             <div id="emptyState" class="text-center py-8 text-slate-400 text-sm">
                 Nessun utente inserito. Compila il modulo sopra per iniziare.
             </div>
         </div>
     </div>
-
-    <!-- Script JavaScript per la gestione della tabella e del DOM -->
     <script>
-        // Funzione di supporto per mostrare notifiche visive senza usare l'alert()
         function showToast(message, isError = false) {
             const toast = document.getElementById('toastMessage');
             toast.textContent = message;
@@ -93,8 +79,6 @@
                 toast.classList.add('hidden');
             }, 4000);
         }
-
-        // Gestione della visibilità dell'avviso tabella vuota
         function aggiornaStatoTabella() {
             const tbody = document.getElementById('corpoTabella');
             const emptyState = document.getElementById('emptyState');
@@ -104,17 +88,12 @@
                 emptyState.classList.add('hidden');
             }
         }
-
-        // Funzione principale richiamata dal bottone per aggiungere i dati alla tabella
         function aggiungiUtente() {
-            // 1. Recupero dei valori dai 5 campi di input
             const nome = document.getElementById('nome').value.trim();
             const cognome = document.getElementById('cognome').value.trim();
             const indirizzo = document.getElementById('indirizzo').value.trim();
             const citta = document.getElementById('citta').value.trim();
             const eta = document.getElementById('eta').value.trim();
-
-            // 2. Validazione di base per evitare campi vuoti
             if (!nome || !cognome || !indirizzo || !citta || !eta) {
                 showToast('Attenzione: Tutti i campi sono obbligatori!', true);
                 return;
@@ -124,37 +103,26 @@
                 showToast('Attenzione: Inserire un\'età valida compresa tra 1 e 120.', true);
                 return;
             }
-
-            // 3. Riferimento al corpo della tabella HTML
             const tbody = document.getElementById('corpoTabella');
-
-            // 4. Utilizzo dei metodi DOM (stile W3Schools) insertRow e insertCell
-            const newRow = tbody.insertRow(-1); // Inserisce la riga in fondo
+            const newRow = tbody.insertRow(-1); 
             newRow.className = "hover:bg-slate-50 transition-colors";
-
             const cellNome = newRow.insertCell(0);
             const cellCognome = newRow.insertCell(1);
             const cellIndirizzo = newRow.insertCell(2);
             const cellCitta = newRow.insertCell(3);
             const cellEta = newRow.insertCell(4);
             const cellAzioni = newRow.insertCell(5);
-
-            // Stili delle celle
             cellNome.className = "py-4 px-4 font-medium text-slate-900";
             cellCognome.className = "py-4 px-4";
             cellIndirizzo.className = "py-4 px-4 text-slate-500";
             cellCitta.className = "py-4 px-4";
             cellEta.className = "py-4 px-4";
             cellAzioni.className = "py-4 px-4 text-center";
-
-            // Assegnazione del contenuto testuale
             cellNome.textContent = nome;
             cellCognome.textContent = cognome;
             cellIndirizzo.textContent = indirizzo;
             cellCitta.textContent = citta;
             cellEta.textContent = eta;
-
-            // Aggiunta opzionale di un pulsante per rimuovere la singola riga
             const deleteBtn = document.createElement('button');
             deleteBtn.textContent = 'Elimina';
             deleteBtn.className = 'text-xs bg-red-50 text-red-600 hover:bg-red-100 font-medium py-1.5 px-3 rounded-lg transition-colors';
@@ -164,11 +132,7 @@
                 showToast('Riga rimossa con successo.', false);
             };
             cellAzioni.appendChild(deleteBtn);
-
-            // 5. Pulizia dei campi input dopo l'inserimento
             document.getElementById('userForm').reset();
-
-            // Aggiornamento dello stato e feedback positivo
             aggiornaStatoTabella();
             showToast('Dati aggiunti con successo alla tabella!');
         }
