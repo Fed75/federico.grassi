@@ -39,10 +39,10 @@
       var a = Number(document.getElementById("n1").value);
       var b = Number(document.getElementById("n2").value);
       var r = 0;
-      if (op == "+") r = a + b;
-      if (op == "-") r = a - b;
-      if (op == "*") r = a * b;
-      if (op == "/") r = b !== 0 ? a / b : "Errore";
+      if (op === "+") r = a + b;
+      if (op === "-") r = a - b;
+      if (op === "*") r = a * b;
+      if (op === "/") r = b !== 0 ? a / b : "Errore";
       document.getElementById("res").innerHTML = r;
     }
   </script>
