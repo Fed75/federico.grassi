@@ -1,141 +1,43 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestione Anagrafica Utenti</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Tabella Dinamica</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    input, button { margin: 5px 0; padding: 8px; display: block; }
+    table, th, td { border: 1px solid black; border-collapse: collapse; padding: 8px; }
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen py-10 px-4">
-    <div class="max-w-4xl mx-auto space-y-8">
-        <div class="text-center">
-            <h1 class="text-3xl font-bold tracking-tight text-slate-900">Gestione Anagrafica Utenti</h1>
-            <p class="text-slate-600 mt-2">Compila il modulo per aggiungere dinamicamente i dati alla tabella sottostante.</p>
-        </div>
-        <div class="bg-white shadow-xl rounded-2xl p-6 md:p-8 border border-slate-100">
-            <div id="toastMessage" class="hidden mb-6 p-4 rounded-xl text-sm font-medium transition-all duration-300"></div>
-            <form id="userForm" onsubmit="event.preventDefault(); aggiungiUtente();" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Nome</label>
-                    <input type="text" id="nome" placeholder="es. Mario" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Cognome</label>
-                    <input type="text" id="cognome" placeholder="es. Rossi" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Indirizzo</label>
-                    <input type="text" id="indirizzo" placeholder="es. Via Roma 10" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Città</label>
-                    <input type="text" id="citta" placeholder="es. Milano" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Età</label>
-                    <input type="number" id="eta" placeholder="es. 25" min="0" max="120" class="w-full md:w-1/2 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
-                </div>
-                <div class="md:col-span-2 pt-2">
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-indigo-200 transition-all duration-200 active:scale-[0.99]">
-                        Aggiungi alla Tabella
-                    </button>
-                </div>
-            </form>
-        </div>
-        <div class="bg-white shadow-xl rounded-2xl p-6 md:p-8 border border-slate-100">
-            <h2 class="text-xl font-bold text-slate-900 mb-4">Elenco Utenti Registrati</h2>
-            <div class="overflow-x-auto">
-                <table id="tabellaUtenti" class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b border-slate-200 text-slate-500 text-sm uppercase tracking-wider bg-slate-50">
-                            <th class="py-3 px-4 rounded-l-xl">Nome</th>
-                            <th class="py-3 px-4">Cognome</th>
-                            <th class="py-3 px-4">Indirizzo</th>
-                            <th class="py-3 px-4">Città</th>
-                            <th class="py-3 px-4">Età</th>
-                            <th class="py-3 px-4 rounded-r-xl text-center">Azioni</th>
-                        </tr>
-                    </thead>
-                    <tbody id="corpoTabella" class="divide-y divide-slate-100 text-slate-700">
-                    </tbody>
-                </table>
-            </div>
-            <div id="emptyState" class="text-center py-8 text-slate-400 text-sm">
-                Nessun utente inserito. Compila il modulo sopra per iniziare.
-            </div>
-        </div>
-    </div>
-    <script>
-        function showToast(message, isError = false) {
-            const toast = document.getElementById('toastMessage');
-            toast.textContent = message;
-            toast.className = `mb-6 p-4 rounded-xl text-sm font-medium transition-all duration-300 ${isError ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}`;
-            toast.classList.remove('hidden');
-            setTimeout(() => {
-                toast.classList.add('hidden');
-            }, 4000);
-        }
-        function aggiornaStatoTabella() {
-            const tbody = document.getElementById('corpoTabella');
-            const emptyState = document.getElementById('emptyState');
-            if (tbody.rows.length === 0) {
-                emptyState.classList.remove('hidden');
-            } else {
-                emptyState.classList.add('hidden');
-            }
-        }
-        function aggiungiUtente() {
-            const nome = document.getElementById('nome').value.trim();
-            const cognome = document.getElementById('cognome').value.trim();
-            const indirizzo = document.getElementById('indirizzo').value.trim();
-            const citta = document.getElementById('citta').value.trim();
-            const eta = document.getElementById('eta').value.trim();
-            if (!nome || !cognome || !indirizzo || !citta || !eta) {
-                showToast('Attenzione: Tutti i campi sono obbligatori!', true);
-                return;
-            }
+<body>
 
-            if (Number(eta) <= 0 || Number(eta) > 120) {
-                showToast('Attenzione: Inserire un\'età valida compresa tra 1 e 120.', true);
-                return;
-            }
-            const tbody = document.getElementById('corpoTabella');
-            const newRow = tbody.insertRow(-1); 
-            newRow.className = "hover:bg-slate-50 transition-colors";
-            const cellNome = newRow.insertCell(0);
-            const cellCognome = newRow.insertCell(1);
-            const cellIndirizzo = newRow.insertCell(2);
-            const cellCitta = newRow.insertCell(3);
-            const cellEta = newRow.insertCell(4);
-            const cellAzioni = newRow.insertCell(5);
-            cellNome.className = "py-4 px-4 font-medium text-slate-900";
-            cellCognome.className = "py-4 px-4";
-            cellIndirizzo.className = "py-4 px-4 text-slate-500";
-            cellCitta.className = "py-4 px-4";
-            cellEta.className = "py-4 px-4";
-            cellAzioni.className = "py-4 px-4 text-center";
-            cellNome.textContent = nome;
-            cellCognome.textContent = cognome;
-            cellIndirizzo.textContent = indirizzo;
-            cellCitta.textContent = citta;
-            cellEta.textContent = eta;
-            const deleteBtn = document.createElement('button');
-            deleteBtn.textContent = 'Elimina';
-            deleteBtn.className = 'text-xs bg-red-50 text-red-600 hover:bg-red-100 font-medium py-1.5 px-3 rounded-lg transition-colors';
-            deleteBtn.onclick = function() {
-                tbody.deleteRow(newRow.rowIndex - 1);
-                aggiornaStatoTabella();
-                showToast('Riga rimossa con successo.', false);
-            };
-            cellAzioni.appendChild(deleteBtn);
-            document.getElementById('userForm').reset();
-            aggiornaStatoTabella();
-            showToast('Dati aggiunti con successo alla tabella!');
-        }
-    </script>
+  <input type="text" id="nome" placeholder="Nome">
+  <input type="text" id="cognome" placeholder="Cognome">
+  <input type="text" id="indirizzo" placeholder="Indirizzo">
+  <input type="text" id="citta" placeholder="Città">
+  <input type="number" id="eta" placeholder="Età">
+
+  <button onclick="aggiungi()">Aggiungi</button>
+
+  <table id="tabella">
+    <tr>
+      <th>Nome</th><th>Cognome</th><th>Indirizzo</th><th>Città</th><th>Età</th>
+    </tr>
+  </table>
+
+  <script>
+    function aggiungi() {
+      var n = document.getElementById("nome").value;
+      var c = document.getElementById("cognome").value;
+      var i = document.getElementById("indirizzo").value;
+      var ci = document.getElementById("citta").value;
+      var e = document.getElementById("eta").value;
+
+      var riga = "<tr><td>" + n + "</td><td>" + c + "</td><td>" + i + "</td><td>" + ci + "</td><td>" + e + "</td></tr>";
+      
+      document.getElementById("tabella").innerHTML += riga;
+    }
+  </script>
+
 </body>
 </html>
