@@ -1,9 +1,3 @@
-<nav>
-  <a href="index.html">Gestione Utenti</a> | 
-  <a href="tabella.html">tabella</a>
-</nav>
-<hr>
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -11,12 +5,22 @@
   <title>Tabella Dinamica</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
+    nav { margin-bottom: 15px; }
     input, button { margin: 5px 0; padding: 8px; display: block; }
-    table, th, td { border: 1px solid black; border-collapse: collapse; padding: 8px; }
+    table, th, td { border: 1px solid black; border-collapse: collapse; padding: 8px; margin-top: 10px; }
   </style>
 </head>
 <body>
 
+  <!-- Menu di navigazione tra le pagine -->
+  <nav>
+    <a href="index.html">Home</a> | 
+    <a href="tabella.html">Tabella Utenti</a> | 
+    <a href="calcolatrice.html">Calcolatrice</a>
+  </nav>
+  <hr>
+
+  <h2>Inserimento Utenti</h2>
   <input type="text" id="nome" placeholder="Nome">
   <input type="text" id="cognome" placeholder="Cognome">
   <input type="text" id="indirizzo" placeholder="Indirizzo">
