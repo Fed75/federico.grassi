@@ -39,10 +39,24 @@
       var a = Number(document.getElementById("n1").value);
       var b = Number(document.getElementById("n2").value);
       var r = 0;
-      if (op == "+") r = a + b;
-      if (op == "-") r = a - b;
-      if (op == "*") r = a * b;
-      if (op == "/") r = b != 0 ? a / b : "impossibile";
+
+      switch (op) {
+        case "+":
+          r = a + b;
+          break;
+        case "-":
+          r = a - b;
+          break;
+        case "*":
+          r = a * b;
+          break;
+        case "/":
+          r = b != 0 ? a / b : "impossibile";
+          break;
+        default:
+          r = "Scegli un'operazione";
+      }
+
       document.getElementById("res").innerHTML = r;
     }
   </script>
