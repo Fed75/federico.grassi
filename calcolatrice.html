@@ -6,9 +6,9 @@
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
     nav { margin-bottom: 15px; }
-    input, button { margin: 5px 0; padding: 10px; display: block; width: 200px; }
-    .ops { display: flex; gap: 5px; width: 200px; }
-    .ops button { flex: 1; }
+    input { margin: 5px 0; padding: 10px; display: block; width: 200px; box-sizing: border-box; }
+    .ops { display: flex; gap: 5px; width: 200px; margin: 10px 0; }
+    .ops button { flex: 1; padding: 10px; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -20,25 +20,23 @@
   <hr>
 
   <h2>Calcolatrice</h2>
-  <input type="text" id="n1" placeholder="Numero 1">
-  <input type="text" id="n2" placeholder="Numero 2">
+  <input type="number" id="n1" placeholder="Numero 1">
+  <input type="number" id="n2" placeholder="Numero 2">
 
   <div class="ops">
-    <button onclick="op='+'">+</button>
-    <button onclick="op='-'">-</button>
-    <button onclick="op='*'">*</button>
-    <button onclick="op='/'">/</button>
+    <button onclick="calcola('+')">+</button>
+    <button onclick="calcola('-')">-</button>
+    <button onclick="calcola('*')">*</button>
+    <button onclick="calcola('/')">/</button>
   </div>
 
-  <button onclick="calcola()">=</button>
-  <h2 id="res">0</h2>
+  <p>Risultato: <strong id="res">0</strong></p>
 
   <script>
-    var op = "";
-    function calcola() {
-      var a = Number(document.getElementById("n1").value);
-      var b = Number(document.getElementById("n2").value);
-      var r = 0;
+    function calcola(op) {
+      let a = Number(document.getElementById("n1").value);
+      let b = Number(document.getElementById("n2").value);
+      let r = 0;
 
       switch (op) {
         case "+":
@@ -51,13 +49,15 @@
           r = a * b;
           break;
         case "/":
-          r = b != 0 ? a / b : "impossibile";
+          if (b == 0) {
+            r = "impossibile";
+          } else {
+            r = a / b;
+          }
           break;
-        default:
-          r = "Scegli un'operazione";
       }
 
-      document.getElementById("res").innerHTML = r;
+      document.getElementById("res").textContent = r;
     }
   </script>
 
